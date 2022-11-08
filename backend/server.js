@@ -17,14 +17,25 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
-
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin,X-Requested-With,Content-Type,Accept"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  );
+  next();
+});
 // user routes
 app.use("/api/user",userRoutes);
 app.use("/api/amdin", adminRoutes);
 app.use("/api/user/cart",cartRoutes)
-
+ 
 //database connection
-db.connect((err) => {
+db.connect((err) => {    
   if (err) {
     console.log("connection error" + err);
   } else {
