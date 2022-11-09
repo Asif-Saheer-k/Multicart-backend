@@ -37,7 +37,7 @@ const userLogin = asyncHandler(async (req, res) => {
 
 //user registration function
 const userRegistration = asyncHandler(async (req, res) => {
-  const CUST_ID=null
+  const CUST_ID=1
   const { name, email, phone, password } = req.body;
   const checkPhone = await db.get()
     .collection(collection.USER_COLLECTION)
@@ -70,9 +70,8 @@ const phoneVerification = asyncHandler(async (req, res) => {
   } else {
     ID = 10000000;
   }
-  console.log(ID,"kjjj");
   const OTP = req.body.otp;
-  req.session.userDeatails.CUST_ID=ID
+  // req.session.userDeatails.CUST_ID=ID
   const userData = req.session.userDeatails;
   if (!req.session.userDeatails) {
     res.status(500).json("Somthing went wrong");
