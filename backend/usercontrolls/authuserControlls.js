@@ -69,7 +69,7 @@ const phoneVerification = asyncHandler(async (req, res) => {
   } else {
     ID = 10000000;
   }
-  console.log(CUST_ID,"kjjj");
+  console.log(ID,"kjjj");
   const OTP = req.body.otp;
   const userData = req.session.userDeatails;
   userData.CUST_ID = ID;
