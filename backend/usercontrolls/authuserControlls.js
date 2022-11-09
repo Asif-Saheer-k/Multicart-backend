@@ -71,8 +71,9 @@ const phoneVerification = asyncHandler(async (req, res) => {
   }
   console.log(ID,"kjjj");
   const OTP = req.body.otp;
+  req.session.userDeatails.CUST_ID=ID
   const userData = req.session.userDeatails;
-  userData.CUST_ID = ID;
+ 
   // if (!req.session.userDeatails) {
   //   res.status(500).json("Somthing went wrong");
   // }
