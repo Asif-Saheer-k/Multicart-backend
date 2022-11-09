@@ -39,6 +39,7 @@ const userLogin = asyncHandler(async (req, res) => {
 const userRegistration = asyncHandler(async (req, res) => {
   const CUST_ID=1
   const { name, email, phone, password } = req.body;
+  console.log(req.body);
   const checkPhone = await db.get()
     .collection(collection.USER_COLLECTION)
     .findOne({ phone: phone });
