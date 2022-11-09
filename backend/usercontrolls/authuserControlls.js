@@ -37,6 +37,7 @@ const userLogin = asyncHandler(async (req, res) => {
 
 //user registration function
 const userRegistration = asyncHandler(async (req, res) => {
+  const CUST_ID=null
   const { name, email, phone, password } = req.body;
   const checkPhone = await db.get()
     .collection(collection.USER_COLLECTION)
@@ -44,7 +45,7 @@ const userRegistration = asyncHandler(async (req, res) => {
   if (checkPhone) {
     res.status(201).json("Already registred number");
   } else {
-    req.session.userDeatails = req.body;
+    req.session.userDeatails = {...req.body,CUST_ID};
     const code = await verification.sendOtp(phone);
     if (code) {
       res.status(200).json("Success");
@@ -73,10 +74,9 @@ const phoneVerification = asyncHandler(async (req, res) => {
   const OTP = req.body.otp;
   req.session.userDeatails.CUST_ID=ID
   const userData = req.session.userDeatails;
- 
-  // if (!req.session.userDeatails) {
-  //   res.status(500).json("Somthing went wrong");
-  // }
+  if (!req.session.userDeatails) {
+    res.status(500).json("Somthing went wrong");
+  }
   const phoneNumber = userData.phone;
   userData.password = await bcrypt.hash(userData.password, 10);
   const code = await verification.CheckOtp(phoneNumber, OTP);
