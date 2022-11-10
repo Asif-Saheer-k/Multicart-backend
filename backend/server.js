@@ -19,7 +19,12 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors())
-app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
+app.use(session({
+  secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+  saveUninitialized:true,
+  cookie: { maxAge: oneDay },
+  resave: false 
+}));
 app.use(morgan('combined'));
   
 // user routes

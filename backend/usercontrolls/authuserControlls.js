@@ -79,6 +79,7 @@ const phoneVerification = asyncHandler(async (req, res) => {
   if (!req.session.userDeatails) {
     res.status(500).json("Somthing went wrong");
   }
+  
   const phoneNumber = userData.phone;
   userData.CUST_ID=ID
   userData.password = await bcrypt.hash(userData.password, 10);
