@@ -58,6 +58,7 @@ const userRegistration = asyncHandler(async (req, res) => {
 
 //user Phone verification function
 const phoneVerification = asyncHandler(async (req, res) => {
+  console.log(req.body);
   let UserId = await db
     .get()
     .collection(collection.USER_COLLECTION)

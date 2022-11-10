@@ -7,19 +7,21 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./userRoutes/authuserRoutes");
 const adminRoutes = require("./adminRoutes/adminRoutes");
 const cartRoutes=require("./userRoutes/cartRoutes")
+const morgan=require('morgan')
 __dirname = path.resolve();
-
-
 require("dotenv").config({ path: __dirname + "/.env" });
 
 const PORT = process.env.PORT || 9000;
 
 const app = express();
+
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin:"*"}))
+app.use(cors())
 app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
-
+app.use(morgan('combined'));
+  
 // user routes
 app.use("/api/user",userRoutes);
 app.use("/api/admin", adminRoutes);
