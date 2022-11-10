@@ -6,6 +6,7 @@ const generateToken = require("../utils/jwtToken");
 
 const AdminLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log(req.body);
   if (email == process.env.ADMIN_EMAIL) {
     if (password == process.env.ADMIN_PASSWORD) {
       const token = generateToken(password);
