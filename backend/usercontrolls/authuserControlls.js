@@ -78,6 +78,7 @@ const phoneVerification = asyncHandler(async (req, res) => {
     res.status(500).json("Somthing went wrong");
   }
   const phoneNumber = userData.phone;
+  userData.CUST_ID=ID
   userData.password = await bcrypt.hash(userData.password, 10);
   const code = await verification.CheckOtp(phoneNumber, OTP);
   // check valid true or false
