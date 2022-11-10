@@ -49,7 +49,7 @@ const userRegistration = asyncHandler(async (req, res) => {
     req.session.userDeatails = {...req.body,CUST_ID};
     const code = await verification.sendOtp(phone);
     if (code) {
-      res.status(200).json("Success");
+      res.status(200).json( req.session.userDeatails);
     } else {
       res.status(500).json("Somthing went wrong");
     }
@@ -74,6 +74,7 @@ const phoneVerification = asyncHandler(async (req, res) => {
   }
   const OTP = req.body.otp;
   // req.session.userDeatails.CUST_ID=ID
+  console.log(req.session.userDeatails,"DDCCCBBEE");
   const userData = req.session.userDeatails;
   if (!req.session.userDeatails) {
     res.status(500).json("Somthing went wrong");
