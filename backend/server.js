@@ -14,7 +14,7 @@ require("dotenv").config({ path: __dirname + "/.env" });
 const PORT = process.env.PORT || 9000;
 
 const app = express();
-
+const oneDay = 1000 * 60 * 60 * 24;
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cookieParser());
