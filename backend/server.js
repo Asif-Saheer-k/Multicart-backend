@@ -25,13 +25,13 @@ app.use((req, res, next) => {
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET,POST,PUT,PATCH,DELETE"
+    "GET,POST,PUT,PATCH,DELETE,OPTIONS"
   );
   next();
 });
 // user routes
 app.use("/api/user",userRoutes);
-app.use("/api/amdin", adminRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/user/cart",cartRoutes)
  
 //database connection
