@@ -18,7 +18,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors())
+app.use(cors({origin:"*"}))
 app.use(session({
   secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
   saveUninitialized:true,
