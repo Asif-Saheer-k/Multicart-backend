@@ -17,14 +17,9 @@ const app = express();
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-
+app.use(cors({origin:"*",methods:['GET','POST'],credentials:true}))
 app.use(cookieParser());
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  next();
-});
+
 app.use(session({
   secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
   saveUninitialized:true,
