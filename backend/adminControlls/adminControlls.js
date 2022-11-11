@@ -7,13 +7,12 @@ const generateToken = require("../utils/jwtToken");
 const AdminLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
-  console.log(process.env.ADMIN_EMAI,process.env.ADMIN_PASSWORD);
+  console.log(process.env.ADMIN_EMAI, process.env.ADMIN_PASSWORD);
   if (email == process.env.ADMIN_EMAIL) {
     if (password == process.env.ADMIN_PASSWORD) {
       const token = generateToken(password);
       res.status(200).json({ token });
     } else {
-
       res.status(401).json("Invalid password");
     }
   } else {
@@ -21,12 +20,14 @@ const AdminLogin = asyncHandler(async (req, res) => {
   }
 });
 const ViewALLuser = asyncHandler(async (req, res) => {
+  console.log("DCCCs");
   try {
     const AllUsers = await db
       .get()
       .collection(collection.USER_COLLECTION)
       .find()
       .toArray();
+    console.log(AllUsers);
     res.status(200).json(AllUsers);
   } catch (error) {
     res.status(400).json("No Records");
