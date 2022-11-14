@@ -21,12 +21,12 @@ app.use(cookieParser());
 
 app.use(
   session({
-    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
-    saveUninitialized: true,
-    cookie: { maxAge: oneDay },
+    secret: "my-secret",
     resave: false,
+    saveUninitialized: true,
   })
 );
+
 app.use(morgan("combined"));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -38,6 +38,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET,POST,PUT,PATCH,DELETE,OPTIONS"
   );
+
   next();
 });
 
