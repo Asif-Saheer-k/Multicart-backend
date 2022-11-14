@@ -18,14 +18,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
-app.use(
-  session({
-    secret: "my-secret",
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 
 app.use(morgan("combined"));
 // Add headers before the routes are defined
@@ -42,7 +35,7 @@ app.use(function (req, res, next) {
 
   // Set to true if you need the website to include cookies in the requests sent
   // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  // res.setHeader('Access-Control-Allow-Credentials', true);
 
   // Pass to next layer of middleware
   next();
