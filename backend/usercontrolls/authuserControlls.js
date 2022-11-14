@@ -27,7 +27,7 @@ const userLogin = asyncHandler(async (req, res) => {
           res.status(401).json("Incorrect Password");
         }
       });
-    }else{
+    } else {
       res.status(401).json("Invalid Email Address");
     }
   } catch (error) {
@@ -37,19 +37,20 @@ const userLogin = asyncHandler(async (req, res) => {
 
 //user registration function
 const userRegistration = asyncHandler(async (req, res) => {
-  const CUST_ID=1
+  const CUST_ID = 1;
   const { name, email, phone, password } = req.body;
   console.log(req.body);
-  const checkPhone = await db.get()
+  const checkPhone = await db
+    .get()
     .collection(collection.USER_COLLECTION)
     .findOne({ phone: phone });
   if (checkPhone) {
     res.status(201).json("Already registred number");
   } else {
-    req.session.userDeatails = {...req.body,CUST_ID};
+    req.session.userDeatails = { ...req.body, CUST_ID };
     const code = await verification.sendOtp(phone);
     if (code) {
-      res.status(200).json( req.session.userDeatails);
+      res.status(200).json(req.session.userDeatails);
     } else {
       res.status(500).json("Somthing went wrong");
     }
@@ -59,44 +60,48 @@ const userRegistration = asyncHandler(async (req, res) => {
 //user Phone verification function
 const phoneVerification = asyncHandler(async (req, res) => {
   console.log(req.body);
-  let UserId = await db
-    .get()
-    .collection(collection.USER_COLLECTION)
-    .find()
-    .sort({ _id: -1 })
-    .limit(1)
-    .toArray();
-  let ID;
-  if (UserId[0]) {
-    ID = UserId[0]?.CUST_ID + 1;
-  } else {
-    ID = 10000000;
-  }
-  const OTP = req.body.otp;
-  // req.session.userDeatails.CUST_ID=ID
-  console.log(req.session.userDeatails,"DDCCCBBEE");
-  const userData = req.session.userDeatails;
-  if (!req.session.userDeatails) {
-    res.status(500).json("Somthing went wrong");
-  }
-  
-  const phoneNumber = userData.phone;
-  userData.CUST_ID=ID
-  userData.password = await bcrypt.hash(userData.password, 10);
-  const code = await verification.CheckOtp(phoneNumber, OTP);
-  // check valid true or false
-  if (code.valid) {
-    const User = await db
+  if (req.session.userDeatails) {
+    let UserId = await db
       .get()
       .collection(collection.USER_COLLECTION)
-      .insertOne(userData);
-    if (User) {
-      res.status(200).json("successfuly reagisted");
+      .find()
+      .sort({ _id: -1 })
+      .limit(1)
+      .toArray();
+    let ID;
+    if (UserId[0]) {
+      ID = UserId[0]?.CUST_ID + 1;
     } else {
+      ID = 10000000;
+    }
+    const OTP = req.body.otp;
+    // req.session.userDeatails.CUST_ID=ID
+
+    const userData = req.session.userDeatails;
+    if (!req.session.userDeatails) {
       res.status(500).json("Somthing went wrong");
     }
+
+    const phoneNumber = userData.phone;
+    userData.CUST_ID = ID;
+    userData.password = await bcrypt.hash(userData.password, 10);
+    const code = await verification.CheckOtp(phoneNumber, OTP);
+    // check valid true or false
+    if (code.valid) {
+      const User = await db
+        .get()
+        .collection(collection.USER_COLLECTION)
+        .insertOne(userData);
+      if (User) {
+        res.status(200).json("successfuly reagisted");
+      } else {
+        res.status(500).json("Somthing went wrong");
+      }
+    } else {
+      res.status(401).json("Please Verify OTP");
+    }
   } else {
-    res.status(401).json("Please Verify OTP");
+    res.status(500).json("Somthing went wrong");
   }
 });
 const OTPLOGIN = asyncHandler(async (req, res) => {
@@ -190,5 +195,5 @@ module.exports = {
   verifyOTP,
   GetUserDeatilse,
   UpdateUserCridentails,
-  ChangePassword
+  ChangePassword,
 };
