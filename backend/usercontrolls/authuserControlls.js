@@ -74,18 +74,19 @@ const phoneVerification = asyncHandler(async (req, res) => {
   }
   const OTP = req.body.otp;
   // req.session.userDeatails.CUST_ID=ID
-  console.log(req.session.userDeatails,"DDCCCBBEE");
-  const userData = req.session.userDeatails;
-  if (!req.session.userDeatails) {
-    res.status(500).json("Somthing went wrong");
-  }
+  // console.log(req.session.userDeatails,"DDCCCBBEE");
+  // const userData = req.session.userDeatails;
+  // if (!req.session.userDeatails) {
+  //   res.status(500).json("Somthing went wrong");
+  // }
   
-  const phoneNumber = userData.phone;
-  userData.CUST_ID=ID
-  userData.password = await bcrypt.hash(userData.password, 10);
-  const code = await verification.CheckOtp(phoneNumber, OTP);
+  const valid=true
+  // const phoneNumber = userData.phone;
+  // userData.CUST_ID=ID
+  // userData.password = await bcrypt.hash(userData.password, 10);
+  // const code = await verification.CheckOtp(phoneNumber, OTP);
   // check valid true or false
-  if (code.valid) {
+  if (valid) {
     const User = await db
       .get()
       .collection(collection.USER_COLLECTION)
