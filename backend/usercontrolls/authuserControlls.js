@@ -59,9 +59,16 @@ const userRegistration = asyncHandler(async (req, res) => {
 
 //user Phone verification function
 const phoneVerification = asyncHandler(async (req, res) => {
-  console.log(req.body);
-  console.log(req.session.userDeatails);
-  if (req.session.userDeatails) {
+  const { name, email, phone, CUST_ID, password, otp } = req.body;
+  const userData = {
+    name,
+    email,
+    phone,
+    CUST_ID,
+    password,
+    otp,
+  };
+
     let UserId = await db
       .get()
       .collection(collection.USER_COLLECTION)
@@ -75,13 +82,8 @@ const phoneVerification = asyncHandler(async (req, res) => {
     } else {
       ID = 10000000;
     }
-    const OTP = req.body.otp;
+    const OTP = otp
     // req.session.userDeatails.CUST_ID=ID
-
-    const userData = req.session.userDeatails;
-    if (!req.session.userDeatails) {
-      res.status(500).json("Somthing went wrong");
-    }
 
     const phoneNumber = userData.phone;
     userData.CUST_ID = ID;
@@ -101,9 +103,7 @@ const phoneVerification = asyncHandler(async (req, res) => {
     } else {
       res.status(401).json("Please Verify OTP");
     }
-  } else {
-    res.status(500).json("Somthing went wrong");
-  }
+
 });
 const OTPLOGIN = asyncHandler(async (req, res) => {
   const phone = req.body.phone;
