@@ -47,8 +47,8 @@ const userRegistration = asyncHandler(async (req, res) => {
   if (checkPhone) {
     res.status(201).json("Already registred number");
   } else {
-    req.session.userDeatails = { ...req.body, CUST_ID };
     const code = await verification.sendOtp(phone);
+    console.log(code,"kc kckckckck");
     if (code) {
       res.status(200).json(req.session.userDeatails);
     } else {
