@@ -69,41 +69,40 @@ const phoneVerification = asyncHandler(async (req, res) => {
     otp,
   };
 
-    let UserId = await db
+  let UserId = await db
+    .get()
+    .collection(collection.USER_COLLECTION)
+    .find()
+    .sort({ _id: -1 })
+    .limit(1)
+    .toArray();
+  let ID;
+  if (UserId[0]) {
+    ID = UserId[0]?.CUST_ID + 1;
+  } else {
+    ID = 10000000;
+  }
+  const OTP = otp;
+  // req.session.userDeatails.CUST_ID=ID
+
+  const phoneNumber = userData.phone;
+  userData.CUST_ID = ID;
+  userData.password = await bcrypt.hash(userData.password, 10);
+  const code = await verification.CheckOtp(phoneNumber, OTP);
+  // check valid true or false
+  if (code.valid) {
+    const User = await db
       .get()
       .collection(collection.USER_COLLECTION)
-      .find()
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray();
-    let ID;
-    if (UserId[0]) {
-      ID = UserId[0]?.CUST_ID + 1;
+      .insertOne(userData);
+    if (User) {
+      res.status(200).json("successfuly reagisted");
     } else {
-      ID = 10000000;
+      res.status(500).json("Somthing went wrong");
     }
-    const OTP = otp
-    // req.session.userDeatails.CUST_ID=ID
-
-    const phoneNumber = userData.phone;
-    userData.CUST_ID = ID;
-    userData.password = await bcrypt.hash(userData.password, 10);
-    const code = await verification.CheckOtp(phoneNumber, OTP);
-    // check valid true or false
-    if (code.valid) {
-      const User = await db
-        .get()
-        .collection(collection.USER_COLLECTION)
-        .insertOne(userData);
-      if (User) {
-        res.status(200).json("successfuly reagisted");
-      } else {
-        res.status(500).json("Somthing went wrong");
-      }
-    } else {
-      res.status(401).json("Please Verify OTP");
-    }
-
+  } else {
+    res.status(401).json("Please Verify OTP");
+  }
 });
 const OTPLOGIN = asyncHandler(async (req, res) => {
   const phone = req.body.phone;
@@ -115,7 +114,7 @@ const OTPLOGIN = asyncHandler(async (req, res) => {
     req.session.OTPLOGIN = cheackPhone;
     const code = await verification.sendOtp(phone);
     if (code) {
-      res.status(200).json("OTP sent");
+      res.status(200).json(cheackPhone);
     } else {
       res.status(500).json("Somthing went wrong");
     }
@@ -124,19 +123,22 @@ const OTPLOGIN = asyncHandler(async (req, res) => {
   }
 });
 const verifyOTP = asyncHandler(async (req, res) => {
-  if (!req.session.OTPLOGIN) {
-    res.status(500).json("Somthing went wrong");
-  }
-  const OTP = req.body.otp;
-  const userDeatails = req.session.OTPLOGIN;
-  const code = await verification.CheckOtp(userDeatails.phone, OTP);
-  console.log(code);
+  const { name, phone, email, password, otp, CUST_ID } = req.body;
+  const userDeatails = {
+    name,
+    phone,
+    password,
+    email,
+    otp,
+    CUST_ID,
+  };
+  const code = await verification.CheckOtp(phone, otp);
   if (code.valid) {
     const name = userDeatails.name;
     const email = userDeatails.email;
     const phone = userDeatails.phone;
     const CUST_ID = userDeatails.CUST_ID;
-    const token = generateToken(userDeatails._id);
+    const token = generateToken(userDeatails.CUST_ID);
     res.status(200).json({ name, email, phone, CUST_ID, token });
   } else {
     res.status(401).json("Invalid OTP");

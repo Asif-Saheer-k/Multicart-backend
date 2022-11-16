@@ -35,13 +35,16 @@ const ViewALLuser = asyncHandler(async (req, res) => {
 });
 const DeleteUser = asyncHandler(async (req, res) => {
   const ID = req.params.id;
-  try {
-    await db
-      .get()
-      .collection(collection.USER_COLLECTION)
-      .deleteOne({ CUST_ID: parseInt(ID) });
+  console.log(ID);
+
+  const deleted = await db
+    .get()
+    .collection(collection.USER_COLLECTION)
+    .deleteOne({ CUST_ID: parseInt(ID) });
+
+  if (deleted) {
     res.status(200).json("Deleted");
-  } catch (erorr) {
+  } else {
     res.status(500).json("Somthing Went Wrong");
   }
 });
