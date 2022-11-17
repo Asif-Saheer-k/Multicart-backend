@@ -9,11 +9,13 @@ const verification = require("../middlewares/twiliovVerification");
 const userLogin = asyncHandler(async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  console.log(req.body);
   try {
     const Findemail = await db
       .get()
       .collection(collection.USER_COLLECTION)
       .findOne({ email: email });
+      console.log(Findemail);
     if (Findemail) {
       bcrypt.compare(password, Findemail.password).then(async (status) => {
         if (status) {
