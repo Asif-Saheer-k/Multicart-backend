@@ -48,4 +48,16 @@ const DeleteUser = asyncHandler(async (req, res) => {
     res.status(500).json("Somthing Went Wrong");
   }
 });
-module.exports = { AdminLogin, ViewALLuser, DeleteUser };
+const AddBanner = asyncHandler(async (req, res) => {
+  const bannerData = req.body;
+  const Insert = await db
+    .get()
+    .collection(collection.BANNER_COLLECTION)
+    .insertOne(bannerData);
+  if (Insert) {
+    res.status(200).json("Succes");
+  } else {
+    res.status(401).json("Somthing Went Wrong");
+  }
+});
+module.exports = { AdminLogin, ViewALLuser, DeleteUser, AddBanner };

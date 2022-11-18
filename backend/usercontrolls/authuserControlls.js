@@ -17,7 +17,7 @@ const userLogin = asyncHandler(async (req, res) => {
       .findOne({ email: email });
       console.log(Findemail);
     if (Findemail) {
-      bcrypt.compare(password, Findemail.password).then(async (status) => {
+      bcrypt.compare(password,Findemail.password).then(async (status) => {
         if (status) {
           const name = Findemail.name;
           const email = Findemail.email;
@@ -42,6 +42,7 @@ const userRegistration = asyncHandler(async (req, res) => {
   const CUST_ID = 1;
   const { name, email, phone, password } = req.body;
   console.log(req.body);
+
   const checkPhone = await db
     .get()
     .collection(collection.USER_COLLECTION)
@@ -50,9 +51,8 @@ const userRegistration = asyncHandler(async (req, res) => {
     res.status(201).json("Already registred number");
   } else {
     const code = await verification.sendOtp(phone);
-    console.log(code,"kc kckckckck");
     if (code) {
-      res.status(200).json(req.session.userDeatails);
+      res.status(200).json({name,email,phone,password});
     } else {
       res.status(500).json("Somthing went wrong");
     }
