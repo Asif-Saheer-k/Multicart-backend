@@ -49,6 +49,7 @@ const DeleteUser = asyncHandler(async (req, res) => {
   }
 });
 const AddBanner = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const bannerData = req.body;
   const Insert = await db
     .get()
