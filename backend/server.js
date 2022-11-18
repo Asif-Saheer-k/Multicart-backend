@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./userRoutes/authuserRoutes");
 const adminRoutes = require("./adminRoutes/adminRoutes");
 const cartRoutes = require("./userRoutes/cartRoutes");
+const commonRouts=require("./userRoutes/commonRoutes")
 const morgan = require("morgan");
 __dirname = path.resolve();
 require("dotenv").config({ path: __dirname + "/.env" });
@@ -47,6 +48,7 @@ app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/user/cart", cartRoutes);
+app.use("/api/user/main",commonRouts)
 
 //database connection
 db.connect((err) => {

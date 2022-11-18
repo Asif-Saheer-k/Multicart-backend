@@ -3,6 +3,7 @@ const db = require("../config/db");
 const bcrypt = require("bcrypt");
 const collection = require("../config/collection");
 const generateToken = require("../utils/jwtToken");
+const { ObjectId } = require("mongodb");
 
 const AdminLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -74,10 +75,23 @@ const ViewAllBanner = asyncHandler(async (req, res) => {
     res.status(201).json("NO RECORDS");
   }
 });
+const DeleteBanner = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const DeleteBanner = await db
+    .get()
+    .collection(collection.BANNER_COLLECTION)
+    .deleteOne({ _id: ObjectId(id) });
+  if (DeleteBanner) {
+    res.status(200).json("Success");
+  } else {
+    res.status(405).json("Somthing Went Wrong");
+  }
+});
 module.exports = {
   AdminLogin,
   ViewALLuser,
   DeleteUser,
   AddBanner,
   ViewAllBanner,
+  DeleteBanner,
 };
