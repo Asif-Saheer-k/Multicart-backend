@@ -56,6 +56,7 @@ const AddBanner = asyncHandler(async (req, res) => {
     .collection(collection.BANNER_COLLECTION)
     .insertOne(bannerData);
   if (Insert) {
+    console.log(Insert);
     res.status(200).json("Succes");
   } else {
     res.status(401).json("Somthing Went Wrong");
