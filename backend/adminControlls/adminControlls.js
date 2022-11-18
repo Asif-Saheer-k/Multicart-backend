@@ -62,4 +62,22 @@ const AddBanner = asyncHandler(async (req, res) => {
     res.status(401).json("Somthing Went Wrong");
   }
 });
-module.exports = { AdminLogin, ViewALLuser, DeleteUser, AddBanner };
+const ViewAllBanner = asyncHandler(async (req, res) => {
+  const AllBanner = await db
+    .get()
+    .collection(collection.BANNER_COLLECTION)
+    .find()
+    .toArray();
+  if (AllBanner) {
+    res.status(200).json(AllBanner);
+  } else {
+    res.status(201).json("NO RECORDS");
+  }
+});
+module.exports = {
+  AdminLogin,
+  ViewALLuser,
+  DeleteUser,
+  AddBanner,
+  ViewAllBanner,
+};
