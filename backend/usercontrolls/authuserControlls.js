@@ -48,7 +48,7 @@ const userRegistration = asyncHandler(async (req, res) => {
     .collection(collection.USER_COLLECTION)
     .findOne({ phone: phone });
   if (checkPhone) {
-    res.status(201).json("Already registred number");
+    res.status(401).json("Already registred number");
   } else {
     const code = await verification.sendOtp(phone);
     if (code) {
