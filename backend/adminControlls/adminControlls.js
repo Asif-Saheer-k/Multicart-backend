@@ -87,6 +87,31 @@ const DeleteBanner = asyncHandler(async (req, res) => {
     res.status(405).json("Somthing Went Wrong");
   }
 });
+const AddCategory = asyncHandler(async (req, res) => {
+  const category = req.body;
+  const update = await db
+    .get()
+    .collection(collection.CATEGORY_COLLECTION)
+    .insertOne(category);
+  if (update) {
+    res.status(200).json(update);
+  } else {
+    res.status(500).json("Somthing Went Wrong");
+  }
+});
+
+const ViewCategory = asyncHandler(async (req, res) => {
+  const TotalCategory = await db
+    .get()
+    .collection(collection.CATEGORY_COLLECTION)
+    .find()
+    .toArray();
+  if (TotalCategory) {
+    res.status(200).json(TotalCategory);
+  } else {
+    res.status(500).json("Somthing Went Wrong");
+  }
+});
 module.exports = {
   AdminLogin,
   ViewALLuser,
@@ -94,4 +119,6 @@ module.exports = {
   AddBanner,
   ViewAllBanner,
   DeleteBanner,
+  AddCategory,
+  ViewCategory
 };

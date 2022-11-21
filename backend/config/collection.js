@@ -1,6 +1,7 @@
 module.exports = {
   PRODUCT_COLLECTION: "product",
   USER_COLLECTION: "user",
+  CATEGORY_COLLECTION: "category",
   ADMIN_COLLECTION: "admin",
   WHOLESALER_COLLECTION: "wholesaler",
   BANNER_COLLECTION: "banner",
