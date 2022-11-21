@@ -10,6 +10,7 @@ const {
   DeleteBanner,
   AddCategory,
   ViewCategory,
+  DeleteCategory
 } = require("../adminControlls/adminControlls");
 
 router.route("/login").post(AdminLogin);
@@ -20,4 +21,5 @@ router.route("/view-all-banner").get(verifyToken, ViewAllBanner);
 router.route("/delete-banner/:id").delete(verifyToken, DeleteBanner);
 router.route("/add-category").post(verifyToken, AddCategory);
 router.route("/view-all-category").get(verifyToken, ViewCategory);
+router.route("/delete-category/:id").get(verifyToken, DeleteCategory);
 module.exports = router;

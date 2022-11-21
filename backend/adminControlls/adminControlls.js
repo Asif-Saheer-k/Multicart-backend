@@ -112,6 +112,18 @@ const ViewCategory = asyncHandler(async (req, res) => {
     res.status(500).json("Somthing Went Wrong");
   }
 });
+const DeleteCategory = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const deleteCategory = await db
+    .get()
+    .collection(collection.CATEGORY_COLLECTION)
+    .deleteOne({ _id: ObjectId(id) });
+  if (deleteCategory) {
+    res.status(200).json(deleteCategory);
+  } else {
+    res.status(500).json("Somthin Went Wrong");
+  }
+});
 module.exports = {
   AdminLogin,
   ViewALLuser,
@@ -120,5 +132,6 @@ module.exports = {
   ViewAllBanner,
   DeleteBanner,
   AddCategory,
-  ViewCategory
+  ViewCategory,
+  DeleteCategory,
 };
