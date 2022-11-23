@@ -124,6 +124,21 @@ const DeleteCategory = asyncHandler(async (req, res) => {
     res.status(500).json("Somthin Went Wrong");
   }
 });
+const AddSubCategory = asyncHandler(async (req, res) => {
+  const varition = req.body;
+  const updateCategory = req.body.subcategory;
+  console.log(req.body);
+  const update = await db
+    .get()
+    .collection(collection.CATEGORY_COLLECTION)
+    .update({ Category: updateCategory }, { $push: { variation: varition } });
+  console.log(update, "DFslflk");
+  if (update) {
+    res.status(200).json("Success");
+  } else {
+    res.status(401).json("Somthing Went Wrong");
+  }
+});
 module.exports = {
   AdminLogin,
   ViewALLuser,
@@ -134,4 +149,5 @@ module.exports = {
   AddCategory,
   ViewCategory,
   DeleteCategory,
+  AddSubCategory,
 };
