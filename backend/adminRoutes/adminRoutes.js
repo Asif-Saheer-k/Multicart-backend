@@ -11,7 +11,8 @@ const {
   AddCategory,
   ViewCategory,
   DeleteCategory,
-  AddSubCategory
+  AddSubCategory,
+  Addproducts
 } = require("../adminControlls/adminControlls");
 
 router.route("/login").post(AdminLogin);
@@ -23,5 +24,6 @@ router.route("/delete-banner/:id").delete(verifyToken, DeleteBanner);
 router.route("/add-category").post(verifyToken, AddCategory);
 router.route("/view-all-category").get(verifyToken, ViewCategory);
 router.route("/delete-category/:id").get(verifyToken, DeleteCategory);
-router.route("/add-sub-category").post(verifyToken,AddSubCategory)
+router.route("/add-sub-category").post(verifyToken,AddSubCategory) 
+router.route("/add-products").post(verifyToken,Addproducts)
 module.exports = router;

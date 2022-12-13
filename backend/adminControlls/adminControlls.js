@@ -7,7 +7,7 @@ const { ObjectId } = require("mongodb");
 
 const AdminLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
+
   console.log(process.env.ADMIN_EMAI, process.env.ADMIN_PASSWORD);
   if (email == process.env.ADMIN_EMAIL) {
     if (password == process.env.ADMIN_PASSWORD) {
@@ -121,22 +121,60 @@ const DeleteCategory = asyncHandler(async (req, res) => {
   if (deleteCategory) {
     res.status(200).json(deleteCategory);
   } else {
-    res.status(500).json("Somthin Went Wrong");
+    res.status(500).json("Somthing Went Wrong");
   }
 });
+
 const AddSubCategory = asyncHandler(async (req, res) => {
   const varition = req.body;
-  const updateCategory = req.body.subcategory;
+  const updateCategory = req.body.category;
   console.log(req.body);
   const update = await db
     .get()
     .collection(collection.CATEGORY_COLLECTION)
     .update({ Category: updateCategory }, { $push: { variation: varition } });
-  console.log(update, "DFslflk");
+
   if (update) {
     res.status(200).json("Success");
   } else {
     res.status(401).json("Somthing Went Wrong");
+  }
+});
+const Addproducts = asyncHandler(async (req, res) => {
+  const product = req.body;
+  const oldProducts = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .find()
+    .sort({ _id: -1 })
+    .limit(1);
+  if (oldProducts[0]?.id) {
+    const PR = oldProducts[0].id;
+    const inc = parseInt(PR) + 1;
+    product.id = inc;
+  } else {
+    product.id = 100;
+  }
+  const addproducts = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .insertOne(product);
+  if (addproducts) {
+    res.status(200).json("Success");
+  } else {
+    res.status(500).json("Somthing Went Wrong");
+  }
+});
+const viewAllProducts = asyncHandler(async (req, res) => {
+  const products = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .find()
+    .toArray();
+  if (products) {
+    res.status(200).json(products);
+  } else {
+    res.status(200).json("Somthing Went Wrong");
   }
 });
 module.exports = {
@@ -150,4 +188,6 @@ module.exports = {
   ViewCategory,
   DeleteCategory,
   AddSubCategory,
+  Addproducts,
+  viewAllProducts
 };
