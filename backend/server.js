@@ -45,9 +45,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 // user routes
-app.use("/api/user", userRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/user/cart", cartRoutes);
+app.use("/api/user",userRoutes);
+app.use("/api/admin",adminRoutes);
+app.use("/api/user/cart",cartRoutes);
 app.use("/api/user/main",commonRouts)
 
 //database connection
