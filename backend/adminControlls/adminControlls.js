@@ -179,10 +179,11 @@ const viewAllProducts = asyncHandler(async (req, res) => {
 });
 const ViewCategoryProducts = asyncHandler(async (req, res) => {
   const Category = req.params.id;
+  console.log(Category,"Dkjc");
   const product = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .find({ category: Category });
+    .find({category:Category }).toArray();
   if (product) {
     res.status(200).json(product);
   } else {
