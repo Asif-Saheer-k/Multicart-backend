@@ -177,6 +177,18 @@ const viewAllProducts = asyncHandler(async (req, res) => {
     res.status(200).json("Somthing Went Wrong");
   }
 });
+const ViewCategoryProducts = asyncHandler(async (req, res) => {
+  const Category = req.params.id;
+  const product = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .find({ category: Category });
+  if (product) {
+    res.status(200).json(product);
+  } else {
+    res.status(201).json("No records");
+  }
+});
 module.exports = {
   AdminLogin,
   ViewALLuser,
@@ -189,5 +201,6 @@ module.exports = {
   DeleteCategory,
   AddSubCategory,
   Addproducts,
-  viewAllProducts
+  viewAllProducts,
+  ViewCategoryProducts,
 };
