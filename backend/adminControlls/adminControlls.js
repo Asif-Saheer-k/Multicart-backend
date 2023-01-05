@@ -3,8 +3,46 @@ const db = require("../config/db");
 const bcrypt = require("bcrypt");
 const collection = require("../config/collection");
 const generateToken = require("../utils/jwtToken");
+const AWS = require("aws-sdk");
 const { ObjectId } = require("mongodb");
+const multer = require("multer");
+const ACCESS_KEY = "AKIAWJHY3CZLEPRCYZ35";
+const SECRET_ACCESS_KEY = "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";
+AWS.config.update({ region: "us-east-1" });
 
+const s3 = new AWS.S3({
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_ACCESS_KEY,
+});
+let upload = multer({
+  limits: 1024 * 1024 * 5,
+  fileFilter: function (req, file, done) {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/jpg") {
+      done(null, true);
+    } else {
+      done("Multer File Type in not supported");
+    }
+  },
+});
+
+const uploadS3 = (fileData) => {
+  return new Promise((resovle, reject) => {
+    const params = {
+      Bucket: "moffa",
+      Key: `${Date.now().toString()}.jpg`,
+      Body: fileData,
+    };
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else {
+        console.log(data);
+        return resovle(data);
+      }
+    });
+  });
+};
 const AdminLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -21,7 +59,6 @@ const AdminLogin = asyncHandler(async (req, res) => {
   }
 });
 const ViewALLuser = asyncHandler(async (req, res) => {
-  console.log("DCCCs");
   try {
     const AllUsers = await db
       .get()
@@ -179,16 +216,70 @@ const viewAllProducts = asyncHandler(async (req, res) => {
 });
 const ViewCategoryProducts = asyncHandler(async (req, res) => {
   const Category = req.params.id;
-  console.log(Category,"Dkjc");
   const product = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .find({category:Category }).toArray();
+    .find({ category: Category })
+    .toArray();
   if (product) {
     res.status(200).json(product);
   } else {
     res.status(201).json("No records");
   }
+});
+const ImageUploading = asyncHandler(async (req, res) => {
+  let images = [];
+  if (req.files.file && req.files.file.length > 0) {
+    for (let i = 0; i < req.files.file.length; i++) {
+      console.log(req.files.file[i]);
+      uploadS3(req.files.file[i].data)
+        .then((result) => {
+          const obj = {
+            image: result.Location,
+            key: result.Key,
+          };
+          images.push(obj);
+          if (images.length == req.files.file.length) {
+            res.status(200).json(images);
+          }
+        })
+        .catch((error) => {
+          res.status(400).json("Something went wrong");
+        });
+    }
+  } else {
+    uploadS3(req.files.file.data)
+      .then((result) => {
+        const obj = {
+          image: result.Location,
+          key: result.Key,
+        };
+        res.status(200).json(obj);
+      })
+      .catch((error) => {
+        res.status(400).json("Something went wrong");
+      });
+  }
+  // uploadS3(req.files.file.data)
+  //   .then((result) => {
+  //     console.log(result);
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
+
+  // console.log(req.files);
+  // console.log("kckkc");
+  // const uploadParams = {
+  //   Bucket: "moffa",
+  //   Key: req.files.file.name,
+  //   Body: Buffer.from(req.files.file.data),
+  //   ContentType: req.files.file.mimetype,
+  // };
+  // s3.upload(uploadParams, function (err, data) {
+  //   err && console.log("Error", err);
+  //   data && console.log("Upload Success", data.Location);
+  // });
 });
 module.exports = {
   AdminLogin,
@@ -204,4 +295,5 @@ module.exports = {
   Addproducts,
   viewAllProducts,
   ViewCategoryProducts,
+  ImageUploading,
 };

@@ -12,7 +12,8 @@ const {
   ViewCategory,
   DeleteCategory,
   AddSubCategory,
-  Addproducts
+  Addproducts,
+  ImageUploading
 } = require("../adminControlls/adminControlls");
 
 router.route("/login").post(AdminLogin);
@@ -26,4 +27,5 @@ router.route("/view-all-category").get(verifyToken, ViewCategory);
 router.route("/delete-category/:id").get(verifyToken, DeleteCategory);
 router.route("/add-sub-category").post(verifyToken,AddSubCategory) 
 router.route("/add-products").post(verifyToken,Addproducts)
+router.route("/image-uploading").post(ImageUploading)
 module.exports = router;

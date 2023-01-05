@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const fileUpload=require("express-fileupload")
 const userRoutes = require("./userRoutes/authuserRoutes");
 const adminRoutes = require("./adminRoutes/adminRoutes");
 const cartRoutes = require("./userRoutes/cartRoutes");
@@ -19,7 +20,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 app.use(express.urlencoded({ extended: true }));
 
 
-app.use(morgan("combined"));
+// app.use(morgan("combined"));
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
 
@@ -40,15 +41,15 @@ app.use(function (req, res, next) {
   next();
 });
 
-
+app.use(fileUpload())
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 // user routes
 app.use("/api/user",userRoutes);
-app.use("/api/admin",adminRoutes);
 app.use("/api/user/cart",cartRoutes);
-app.use("/api/user/main",commonRouts)
+app.use("/api/user/main",commonRouts);
+app.use("/api/admin",adminRoutes);
 
 //database connection
 db.connect((err) => {
