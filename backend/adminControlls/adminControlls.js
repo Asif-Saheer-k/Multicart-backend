@@ -281,6 +281,44 @@ const ImageUploading = asyncHandler(async (req, res) => {
   //   data && console.log("Upload Success", data.Location);
   // });
 });
+const ViewStockProducts = asyncHandler(async (req, res) => {
+  const stock = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .find()
+    .toArray();
+  if (stock) {
+    res.status(200).json(stock);  
+  } else {
+    res.status(404).json("No records");
+  }
+});
+const UpdateProduct = asyncHandler(async (req, res) => {
+  const id = req.body.id;
+  const variants = req.body.variants;
+  const updated = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .updateOne({ _id: ObjectId(id) }, { $set: { variants: variants } });
+  if (updated) {
+    res.status(200).json("Updated");
+  } else {
+    res.status(404).json("something went wrong");
+  }
+});
+
+const DeleteProduct = asyncHandler(async (req, res) => {
+  const id = req.body.id;
+  const hidden = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .updateOne({ _id: ObjectId(id) }, { $set: { hidden: true } })
+  if (hidden) {
+    res.status(200).json("Success");
+  } else {
+    res.status(404).json("Something Went Wrong")
+  }
+});
 module.exports = {
   AdminLogin,
   ViewALLuser,
@@ -296,4 +334,7 @@ module.exports = {
   viewAllProducts,
   ViewCategoryProducts,
   ImageUploading,
+  ViewStockProducts,
+  UpdateProduct,
+  DeleteProduct,
 };

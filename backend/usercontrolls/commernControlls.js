@@ -10,9 +10,9 @@ const viewSingleProduct = asyncHandler(async (req, res) => {
     .collection(collection.PRODUCT_COLLECTION)
     .findOne({ _id: ObjectId(id) });
   if (product) {
-    res.status(200).json(product);
+    res.status(200).json(product);   
   } else {
     res.status(404).json("Something went Wrong");
-  }
-});
-module.exports = {viewSingleProduct};
+  }  
+}); 
+module.exports = { viewSingleProduct };
