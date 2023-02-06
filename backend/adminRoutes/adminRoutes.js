@@ -16,7 +16,9 @@ const {
   ImageUploading,
   ViewStockProducts,
   UpdateProduct,
-  DeleteProduct
+  DeleteProduct,
+  viewStockManagementProducts,
+  viewAllProducts
 } = require("../adminControlls/adminControlls");
 const { viewSingleProduct } = require("../usercontrolls/commernControlls");
 
@@ -31,11 +33,12 @@ router.route("/view-all-category").get(verifyToken, ViewCategory);
 router.route("/delete-category/:id").get(verifyToken, DeleteCategory);
 router.route("/add-sub-category").post(verifyToken,AddSubCategory) 
 router.route("/add-products").post(verifyToken,Addproducts)
-router.route("/view-all-stock-management-product").post(ViewStockProducts)
+router.route("/view-all-products").get(verifyToken,viewAllProducts)
+router.route("/view-all-stock-management-product").post(viewStockManagementProducts)
 router.route("/view-single-stock-management-product/:id").get(viewSingleProduct)
 router.route("/update-products").post(verifyToken,UpdateProduct)
 router.route('/delete-products').post(verifyToken,DeleteProduct)
-router.route("/image-uploading").post(ImageUploading) 
+router.route("/image-uploading").post(ImageUploading)  
 
-module.exports = router;
-    
+module.exports = router; 
+      

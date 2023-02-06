@@ -206,12 +206,12 @@ const viewAllProducts = asyncHandler(async (req, res) => {
   const products = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .find()
+    .find({ hidden: false,stockManagement:true })
     .toArray();
   if (products) {
     res.status(200).json(products);
   } else {
-    res.status(200).json("Somthing Went Wrong");
+    res.status(400).json("Somthing Went Wrong");
   }
 });
 const ViewCategoryProducts = asyncHandler(async (req, res) => {
@@ -288,7 +288,7 @@ const ViewStockProducts = asyncHandler(async (req, res) => {
     .find()
     .toArray();
   if (stock) {
-    res.status(200).json(stock);  
+    res.status(200).json(stock);
   } else {
     res.status(404).json("No records");
   }
@@ -312,11 +312,23 @@ const DeleteProduct = asyncHandler(async (req, res) => {
   const hidden = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .updateOne({ _id: ObjectId(id) }, { $set: { hidden: true } })
+    .updateOne({ _id: ObjectId(id) }, { $set: { hidden: true } });
   if (hidden) {
     res.status(200).json("Success");
   } else {
-    res.status(404).json("Something Went Wrong")
+    res.status(404).json("Something Went Wrong");
+  }
+});
+const viewStockManagementProducts = asyncHandler(async (req, res) => {
+  const product = await db
+    .get()
+    .collection(collection.PRODUCT_COLLECTION)
+    .find({ stockManagement: false })
+    .toArray();
+  if (product) {
+    res.status(200).json(product);
+  } else {
+    res.status(400).json("No records");
   }
 });
 module.exports = {
@@ -337,4 +349,5 @@ module.exports = {
   ViewStockProducts,
   UpdateProduct,
   DeleteProduct,
+  viewStockManagementProducts
 };
