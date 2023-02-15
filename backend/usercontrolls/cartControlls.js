@@ -1,16 +1,18 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../config/db");
 const collection = require("../config/collection");
+const { ObjectId } = require("mongodb");
 
 const addToCart = asyncHandler(async (req, res) => {
   const proId = req.body.ProId;
   const userId = req.body.userId;
   const variantsId = req.body.variantsId;
   const proObj = {
-    item: proId,
+    item:ObjectId(proId),
     quantity: 1,
     variantsId,
   };
+  console.log(proObj);
 
   let userCart = await db
     .get()
@@ -26,7 +28,7 @@ const addToCart = asyncHandler(async (req, res) => {
         .get()
         .collection(collection.CART_COLLECTION)
         .updateOne(
-          { userId: userId, "products.item": proId },
+          { userId: userId, "products.item": ObjectId(proId) },
           {
             $inc: { "products.$.quantity": 1 },
           }
@@ -57,6 +59,7 @@ const addToCart = asyncHandler(async (req, res) => {
       userId: userId,
       products: [proObj],
     };
+    
     const insert = await db
       .get()
       .collection(collection.CART_COLLECTION)
@@ -71,12 +74,13 @@ const addToCart = asyncHandler(async (req, res) => {
 
 const getCartProduct = asyncHandler(async (req, res) => {
   const userId = req.params.id;
+  console.log(userId);
   let cartItems = await db
     .get()
     .collection(collection.CART_COLLECTION)
     .aggregate([
       {
-        $match: { userId: parseInt(userId) },
+        $match: { userId:userId},
       },
       {
         $unwind: "$products",
@@ -92,7 +96,7 @@ const getCartProduct = asyncHandler(async (req, res) => {
         $lookup: {
           from: collection.PRODUCT_COLLECTION,
           localField: "item",
-          foreignField: "id",
+          foreignField: "_id",
           as: "product",
         },
       },

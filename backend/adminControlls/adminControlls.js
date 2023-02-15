@@ -6,8 +6,8 @@ const generateToken = require("../utils/jwtToken");
 const AWS = require("aws-sdk");
 const { ObjectId } = require("mongodb");
 const multer = require("multer");
-const ACCESS_KEY = "AKIAWJHY3CZLEPRCYZ35";
-const SECRET_ACCESS_KEY = "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";
+const ACCESS_KEY = process.env.ACCESS_KEY;
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
 AWS.config.update({ region: "us-east-1" });
 
 const s3 = new AWS.S3({
@@ -28,10 +28,10 @@ let upload = multer({
 const uploadS3 = (fileData) => {
   return new Promise((resovle, reject) => {
     const params = {
-      Bucket: "moffa",
+      Bucket: process.env.BUCKET,
       Key: `${Date.now().toString()}.jpg`,
       Body: fileData,
-    };
+    };  
     s3.upload(params, (err, data) => {
       if (err) {
         console.log(err);
@@ -206,7 +206,7 @@ const viewAllProducts = asyncHandler(async (req, res) => {
   const products = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .find({ hidden: false,stockManagement:true })
+    .find({ hidden:false,stockManagement:true })
     .toArray();
   if (products) {
     res.status(200).json(products);
@@ -299,7 +299,7 @@ const UpdateProduct = asyncHandler(async (req, res) => {
   const updated = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .updateOne({ _id: ObjectId(id) }, { $set: { variants: variants } });
+    .updateOne({ _id: ObjectId(id) }, { $set: { variants: variants,stockManagement:true} });
   if (updated) {
     res.status(200).json("Updated");
   } else {
