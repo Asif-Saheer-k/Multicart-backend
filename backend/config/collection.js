@@ -6,6 +6,7 @@ module.exports = {
   WHOLESALER_COLLECTION: "wholesaler",
   BANNER_COLLECTION: "banner",
   CART_COLLECTION: "cart",
+  
   // WHOLESALER_CART_COLLECTION:"Wholesaler cart",
   ORDER_COLLECTION: "order",
   USER_WISHILIST_COLLECTION: "wishilist",

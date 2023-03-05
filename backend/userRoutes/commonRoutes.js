@@ -3,7 +3,7 @@ const { ViewAllBanner, ViewCategory,viewAllProducts, ViewCategoryProducts,ImageU
 const { verifyToken } = require("../middlewares/jwtTokenverification");
 const router = express.Router();
 const {addToCart,getCartProduct,removeProductFromCart}=require('../usercontrolls/cartControlls');
-const { viewSingleProduct } = require("../usercontrolls/commernControlls");
+const { viewSingleProduct,RazorpayIntegration,GetSubCategoryProducts } = require("../usercontrolls/commernControlls");
 const { route } = require("./authuserRoutes");
 
 
@@ -11,7 +11,9 @@ router.route("/view-all-banner").get(ViewAllBanner)
 router.route("/view-all-category").get(ViewCategory);
 router.route("/view-all-products").get(viewAllProducts)
 router.route("/view-single-product/:id").get(viewSingleProduct)
-router.route("/veiw-category-products/:id").get(ViewCategoryProducts)
+router.route("/view-category-products/:id").get(ViewCategoryProducts)
+router.route("/get-subcategory-product").post(GetSubCategoryProducts)
+router.route("/payment-integration").post(RazorpayIntegration)
 
 
 

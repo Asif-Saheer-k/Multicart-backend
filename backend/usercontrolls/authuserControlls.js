@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const collection = require("../config/collection");
 const generateToken = require("../utils/jwtToken");
 const verification = require("../middlewares/twiliovVerification");
+const { ObjectId } = require("mongodb");
 
 //userLogin function
 const userLogin = asyncHandler(async (req, res) => {
@@ -15,7 +16,6 @@ const userLogin = asyncHandler(async (req, res) => {
         .get()
         .collection(collection.USER_COLLECTION)
         .findOne({ email: email });
-      console.log(Findemail);
       if (Findemail) {
         bcrypt.compare(password, Findemail.password).then(async (status) => {
           if (status) {
@@ -42,7 +42,6 @@ const userLogin = asyncHandler(async (req, res) => {
 
 //user registration function
 const userRegistration = asyncHandler(async (req, res) => {
-  const CUST_ID = 1;
   const { name, email, phone, password } = req.body;
   console.log(req.body);
 
@@ -64,34 +63,20 @@ const userRegistration = asyncHandler(async (req, res) => {
 
 //user Phone verification function
 const phoneVerification = asyncHandler(async (req, res) => {
-  const { name, email, phone, CUST_ID, password, otp } = req.body;
+  const { name, email, phone, password, otp } = req.body;
   const userData = {
     name,
     email,
     phone,
-    CUST_ID,
     password,
     otp,
   };
 
-  let UserId = await db
-    .get()
-    .collection(collection.USER_COLLECTION)
-    .find()
-    .sort({ _id: -1 })
-    .limit(1)
-    .toArray();
-  let ID;
-  if (UserId[0]) {
-    ID = UserId[0]?.CUST_ID + 1;
-  } else {
-    ID = 10000000;
-  }
   const OTP = otp;
   // req.session.userDeatails.CUST_ID=ID
 
   const phoneNumber = userData.phone;
-  userData.CUST_ID = ID;
+
   userData.password = await bcrypt.hash(userData.password, 10);
   const code = await verification.CheckOtp(phoneNumber, OTP);
   // check valid true or false
@@ -142,7 +127,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
     const name = userDeatails.name;
     const email = userDeatails.email;
     const phone = userDeatails.phone;
-    const CUST_ID = userDeatails.CUST_ID;
+    const CUST_ID = userDeatails._id;
     const token = generateToken(userDeatails.CUST_ID);
     res.status(200).json({ name, email, phone, CUST_ID, token });
   } else {
@@ -155,7 +140,7 @@ const GetUserDeatilse = asyncHandler(async (req, res) => {
     const userDeatails = await db
       .get()
       .collection(collection.USER_COLLECTION)
-      .findOne({ CUST_ID: parseInt(userID) });
+      .findOne({ _id: ObjectId(userID) });
     res.status(200).json(userDeatails);
   } catch (error) {
     res.status(500).json("Somthing Went Wrong");
@@ -167,7 +152,7 @@ const UpdateUserCridentails = asyncHandler(async (req, res) => {
     await db
       .get()
       .collection(collection.USER_COLLECTION)
-      .updateOne({ CUST_ID: CUST_ID }, { $set: { name: name, email: email } });
+      .updateOne({ _id: ObjectId(CUST_ID) }, { $set: { name: name, email: email } });
     res.status(200).json("Updated");
   } catch (error) {
     res.status(500).json("Somthing Wernt Wrong");
@@ -179,13 +164,13 @@ const ChangePassword = asyncHandler(async (req, res) => {
     const findUser = await db
       .get()
       .collection(collection.USER_COLLECTION)
-      .findOne({ CUST_ID: CUST_ID });
+      .findOne({ _id: ObjectId(CUST_ID)});
     bcrypt.compare(oldPassword, findUser.password).then(async (status) => {
       if (status) {
         await db
           .get()
           .collection(collection.USER_COLLECTION)
-          .updateOne({ CUST_ID: CUST_ID }, { $set: { password: newPassword } });
+          .updateOne({_id: ObjectId(CUST_ID) }, { $set: { password: newPassword } });
         res.status(200).json("Updated");
       } else {
         res.status(401).json("Invalid Password");

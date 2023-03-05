@@ -7,7 +7,7 @@ const AWS = require("aws-sdk");
 const { ObjectId } = require("mongodb");
 const multer = require("multer");
 const ACCESS_KEY = process.env.ACCESS_KEY;
-const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY;
 AWS.config.update({ region: "us-east-1" });
 
 const s3 = new AWS.S3({
@@ -31,7 +31,7 @@ const uploadS3 = (fileData) => {
       Bucket: process.env.BUCKET,
       Key: `${Date.now().toString()}.jpg`,
       Body: fileData,
-    };  
+    };
     s3.upload(params, (err, data) => {
       if (err) {
         console.log(err);
@@ -73,12 +73,10 @@ const ViewALLuser = asyncHandler(async (req, res) => {
 });
 const DeleteUser = asyncHandler(async (req, res) => {
   const ID = req.params.id;
-  console.log(ID);
-
   const deleted = await db
     .get()
     .collection(collection.USER_COLLECTION)
-    .deleteOne({ CUST_ID: parseInt(ID) });
+    .deleteOne({ _id: ObjectId(ID) });
 
   if (deleted) {
     res.status(200).json("Deleted");
@@ -95,9 +93,9 @@ const AddBanner = asyncHandler(async (req, res) => {
     .insertOne(bannerData);
   if (Insert) {
     console.log(Insert);
-    res.status(200).json("Succes");
+    res.status(200).json("Success");
   } else {
-    res.status(401).json("Somthing Went Wrong");
+    res.status(401).json("Something Went Wrong");
   }
 });
 const ViewAllBanner = asyncHandler(async (req, res) => {
@@ -206,7 +204,7 @@ const viewAllProducts = asyncHandler(async (req, res) => {
   const products = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .find({ hidden:false,stockManagement:true })
+    .find({ hidden: false, stockManagement: true })
     .toArray();
   if (products) {
     res.status(200).json(products);
@@ -299,7 +297,10 @@ const UpdateProduct = asyncHandler(async (req, res) => {
   const updated = await db
     .get()
     .collection(collection.PRODUCT_COLLECTION)
-    .updateOne({ _id: ObjectId(id) }, { $set: { variants: variants,stockManagement:true} });
+    .updateOne(
+      { _id: ObjectId(id) },
+      { $set: { variants: variants, stockManagement: true } }
+    );
   if (updated) {
     res.status(200).json("Updated");
   } else {
@@ -349,5 +350,5 @@ module.exports = {
   ViewStockProducts,
   UpdateProduct,
   DeleteProduct,
-  viewStockManagementProducts
+  viewStockManagementProducts,
 };

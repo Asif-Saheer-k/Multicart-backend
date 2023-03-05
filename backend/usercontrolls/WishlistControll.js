@@ -3,7 +3,7 @@ const db = require("../config/db");
 const collection = require("../config/collection");
 const { ObjectId } = require("mongodb");
 
-const addToCart = asyncHandler(async (req, res) => {
+const addToWishlist = asyncHandler(async (req, res) => {
   const proId = req.body.ProId;
   const userId = req.body.userId;
   const variantsId = req.body.variantsId;
@@ -15,7 +15,7 @@ const addToCart = asyncHandler(async (req, res) => {
 
   let userCart = await db
     .get()
-    .collection(collection.USER_WISHILIST_COLLECTION)
+    .collection(collection.CART_COLLECTION)
     .findOne({ userId: parseInt(userId) });
   if (userCart) {
     let proExist = userCart.products.findIndex(
@@ -25,7 +25,7 @@ const addToCart = asyncHandler(async (req, res) => {
     if (proExist != -1) {
       const incquantity = await db
         .get()
-        .collection(collection.USER_WISHILIST_COLLECTION)
+        .collection(collection.CART_COLLECTION)
         .updateOne(
           { userId: userId, "products.item": ObjectId(proId) },
           {
@@ -40,7 +40,7 @@ const addToCart = asyncHandler(async (req, res) => {
     } else {
       const update = await db
         .get()
-        .collection(collection.USER_WISHILIST_COLLECTION)
+        .collection(collection.CART_COLLECTION)
         .updateOne(
           { userId: parseInt(userId) },
           {
@@ -61,7 +61,7 @@ const addToCart = asyncHandler(async (req, res) => {
 
     const insert = await db
       .get()
-      .collection(collection.USER_WISHILIST_COLLECTION)
+      .collection(collection.CART_COLLECTION)
       .insertOne(cartObj);
     if (insert) {
       res.status(200).json("Cart updated");
@@ -71,11 +71,11 @@ const addToCart = asyncHandler(async (req, res) => {
   }
 });
 
-const getCartProduct = asyncHandler(async (req, res) => {
+const getWishlistProduct = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   let cartItems = await db
     .get()
-    .collection(collection.USER_WISHILIST_COLLECTION)
+    .collection(collection.CART_COLLECTION)
     .aggregate([
       {
         $match: { userId: userId },
@@ -111,16 +111,16 @@ const getCartProduct = asyncHandler(async (req, res) => {
   if (cartItems) {
     res.status(200).json(cartItems);
   } else {
-    res.status(401).json("Wishlist Empty");
+    res.status(401).json("Cart Empty");
   }
 });
 
-const removeProductFromCart = asyncHandler(async (req, res) => {
+const removeProductFromWishlist = asyncHandler(async (req, res) => {
   const UserID = req.body.userID;
   const ProductID = req.body.Product;
   const deletes = await db
     .get()
-    .collection(collection.USER_WISHILIST_COLLECTION)
+    .collection(collection.CART_COLLECTION)
     .updateOne(
       {
         userId: parseInt(UserID),
@@ -133,8 +133,8 @@ const removeProductFromCart = asyncHandler(async (req, res) => {
   if (deletes) {
     res.status(200).json("deleted");
   } else {
-    res.status(500).json("Somthing went wrong....");
+    res.status(500).json("Something went wrong....");
   }
 });
 
-module.exports = { addToCart, getCartProduct, removeProductFromCart };
+module.exports = { addToWishlist, getWishlistProduct, removeProductFromWishlist };
