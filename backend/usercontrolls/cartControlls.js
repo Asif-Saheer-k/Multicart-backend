@@ -12,62 +12,64 @@ const addToCart = asyncHandler(async (req, res) => {
     quantity: 1,
     variantsId,
   };
-
-  let userCart = await db
-    .get()
-    .collection(collection.USER_WISHILIST_COLLECTION)
-    .findOne({ userId: parseInt(userId) });
-  if (userCart) {
-    let proExist = userCart.products.findIndex(
-      (product) =>
-        product.item == proId && product.variantsId == variantsId 
-    );
-    if (proExist != -1) {
-      const incquantity = await db
-        .get()
-        .collection(collection.USER_WISHILIST_COLLECTION)
-        .updateOne(
-          { userId: userId, "products.item": ObjectId(proId) },
-          {
-            $inc: { "products.$.quantity": 1 },
-          }
-        );
-      if (incquantity) {
-        res.status(200).json("quantity updated");
+  if ((variantsId, item)) {
+    let userCart = await db
+      .get()
+      .collection(collection.CART_COLLECTION)
+      .findOne({ userId: parseInt(userId) });
+    if (userCart) {
+      let proExist = userCart.products.findIndex(
+        (product) => product.item == proId && product.variantsId == variantsId
+      );
+      if (proExist != -1) {
+        const incquantity = await db
+          .get()
+          .collection(collection.CART_COLLECTION)
+          .updateOne(
+            { userId: userId, "products.item": ObjectId(proId) },
+            {
+              $inc: { "products.$.quantity": 1 },
+            }
+          );
+        if (incquantity) {
+          res.status(200).json("quantity updated");
+        } else {
+          res.status(500).json("Somthing went wrong...");
+        }
       } else {
-        res.status(500).json("Somthing went wrong...");
+        const update = await db
+          .get()
+          .collection(collection.CART_COLLECTION)
+          .updateOne(
+            { userId: parseInt(userId) },
+            {
+              $push: { products: proObj },
+            }
+          );
+        if (update) {
+          res.status(200).json("Product Added");
+        } else {
+          res.status(500).json("Something went wrong....");
+        }
       }
     } else {
-      const update = await db
+      let cartObj = {
+        userId: userId,
+        products: [proObj],
+      };
+
+      const insert = await db
         .get()
-        .collection(collection.USER_WISHILIST_COLLECTION)
-        .updateOne(
-          { userId: parseInt(userId) },
-          {
-            $push: { products: proObj },
-          }
-        );
-      if (update) {
-        res.status(200).json("Product Added");
+        .collection(collection.CART_COLLECTION)
+        .insertOne(cartObj);
+      if (insert) {
+        res.status(200).json("Cart updated");
       } else {
         res.status(500).json("Something went wrong....");
       }
     }
   } else {
-    let cartObj = {
-      userId: userId,
-      products: [proObj],
-    };
-
-    const insert = await db
-      .get()
-      .collection(collection.USER_WISHILIST_COLLECTION)
-      .insertOne(cartObj);
-    if (insert) {
-      res.status(200).json("Cart updated");
-    } else {
-      res.status(500).json("Something went wrong....");
-    }
+    res.status(400).json("Please updated Fields");
   }
 });
 
@@ -75,7 +77,7 @@ const getCartProduct = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   let cartItems = await db
     .get()
-    .collection(collection.USER_WISHILIST_COLLECTION)
+    .collection(collection.CART_COLLECTION)
     .aggregate([
       {
         $match: { userId: userId },
@@ -120,7 +122,7 @@ const removeProductFromCart = asyncHandler(async (req, res) => {
   const ProductID = req.body.Product;
   const deletes = await db
     .get()
-    .collection(collection.USER_WISHILIST_COLLECTION)
+    .collection(collection.CART_COLLECTION)
     .updateOne(
       {
         userId: parseInt(UserID),
