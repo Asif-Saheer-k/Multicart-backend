@@ -6,68 +6,71 @@ const { ObjectId } = require("mongodb");
 const addToWishlist = asyncHandler(async (req, res) => {
   const proId = req.body.ProId;
   const userId = req.body.userId;
-  const variantsId = req.body.variantsId;
+  const variantsId = parseInt(req.body.variantsId);
   const proObj = {
     item: ObjectId(proId),
     quantity: 1,
     variantsId,
   };
+  if (variantsId && userId && proId) {
+    let userCart = await db
+      .get()
+      .collection(collection.USER_WISHILIST_COLLECTION)
+      .findOne({ userId: userId });
+    if (userCart) {
+      let proExist = userCart.products.findIndex(
+        (product) => product.item == proId && product.variantsId == variantsId
+      );
 
-  let userCart = await db
-    .get()
-    .collection(collection.USER_WISHILIST_COLLECTION)
-    .findOne({ userId: parseInt(userId) });
-  if (userCart) {
-    let proExist = userCart.products.findIndex(
-      (product) =>
-        product.item == proId && product.variantsId == variantsId 
-    );
-    if (proExist != -1) {
-      const incquantity = await db
-        .get()
-        .collection(collection.USER_WISHILIST_COLLECTION)
-        .updateOne(
-          { userId: userId, "products.item": ObjectId(proId) },
-          {
-            $inc: { "products.$.quantity": 1 },
-          }
-        );
-      if (incquantity) {
-        res.status(200).json("quantity updated");
+      if (proExist != -1) {
+        const incquantity = await db
+          .get()
+          .collection(collection.USER_WISHILIST_COLLECTION)
+          .updateOne(
+            { userId: userId, "products.item": ObjectId(proId) },
+            {
+              $inc: { "products.$.quantity": 1 },
+            }
+          );
+        if (incquantity) {
+          res.status(200).json("quantity updated");
+        } else {
+          res.status(500).json("Something went wrong...");
+        }
       } else {
-        res.status(500).json("Somthing went wrong...");
+        const update = await db
+          .get()
+          .collection(collection.USER_WISHILIST_COLLECTION)
+          .updateOne(
+            { userId: userId },
+            {
+              $push: { products: proObj },
+            }
+          );
+        if (update) {
+          res.status(200).json("Product Added");
+        } else {
+          res.status(500).json("Something went wrong....");
+        }
       }
     } else {
-      const update = await db
+      let cartObj = {
+        userId: userId,
+        products: [proObj],
+      };
+
+      const insert = await db
         .get()
         .collection(collection.USER_WISHILIST_COLLECTION)
-        .updateOne(
-          { userId: parseInt(userId) },
-          {
-            $push: { products: proObj },
-          }
-        );
-      if (update) {
-        res.status(200).json("Product Added");
+        .insertOne(cartObj);
+      if (insert) {
+        res.status(200).json("wishlist updated");
       } else {
         res.status(500).json("Something went wrong....");
       }
     }
   } else {
-    let cartObj = {
-      userId: userId,
-      products: [proObj],
-    };
-
-    const insert = await db
-      .get()
-      .collection(collection.USER_WISHILIST_COLLECTION)
-      .insertOne(cartObj);
-    if (insert) {
-      res.status(200).json("Cart updated");
-    } else {
-      res.status(500).json("Something went wrong....");
-    }
+    res.status(400).json("Please updated Fields");
   }
 });
 
@@ -111,30 +114,37 @@ const getWishlistProduct = asyncHandler(async (req, res) => {
   if (cartItems) {
     res.status(200).json(cartItems);
   } else {
-    res.status(401).json("Cart Empty");
+    res.status(401).json("Wishlist Empty");
   }
 });
 
 const removeProductFromWishlist = asyncHandler(async (req, res) => {
-  const UserID = req.body.userID;
-  const ProductID = req.body.Product;
+  const UserID = req.body.userId;
+  const ProductID = req.body.ProId;
+  const variantsId = parseInt(req.body.variantsId);
   const deletes = await db
     .get()
     .collection(collection.USER_WISHILIST_COLLECTION)
     .updateOne(
       {
-        userId: parseInt(UserID),
+        userId: UserID,
       },
       {
-        $pull: { products: { item: ProductID } },
+        $pull: {
+          products: { item: ObjectId(ProductID), variantsId: variantsId },
+        },
       }
     );
-
+  console.log(deletes);
   if (deletes) {
     res.status(200).json("deleted");
   } else {
-    res.status(500).json("Something went wrong....");
+    res.status(500).json("Somthing went wrong....");
   }
 });
 
-module.exports = { addToWishlist, getWishlistProduct, removeProductFromWishlist };
+module.exports = {
+  addToWishlist,
+  getWishlistProduct,
+  removeProductFromWishlist,
+};

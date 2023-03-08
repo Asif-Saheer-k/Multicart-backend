@@ -6,21 +6,22 @@ const { ObjectId } = require("mongodb");
 const addToCart = asyncHandler(async (req, res) => {
   const proId = req.body.ProId;
   const userId = req.body.userId;
-  const variantsId = req.body.variantsId;
+  const variantsId = parseInt(req.body.variantsId);
   const proObj = {
     item: ObjectId(proId),
     quantity: 1,
     variantsId,
   };
-  if ((variantsId, item)) {
+  if (variantsId && userId && proId) {
     let userCart = await db
       .get()
       .collection(collection.CART_COLLECTION)
-      .findOne({ userId: parseInt(userId) });
+      .findOne({ userId: userId });
     if (userCart) {
       let proExist = userCart.products.findIndex(
         (product) => product.item == proId && product.variantsId == variantsId
       );
+
       if (proExist != -1) {
         const incquantity = await db
           .get()
@@ -41,7 +42,7 @@ const addToCart = asyncHandler(async (req, res) => {
           .get()
           .collection(collection.CART_COLLECTION)
           .updateOne(
-            { userId: parseInt(userId) },
+            { userId: userId },
             {
               $push: { products: proObj },
             }
@@ -113,25 +114,29 @@ const getCartProduct = asyncHandler(async (req, res) => {
   if (cartItems) {
     res.status(200).json(cartItems);
   } else {
-    res.status(401).json("Wishlist Empty");
+    res.status(401).json("Cart Empty");
   }
 });
 
 const removeProductFromCart = asyncHandler(async (req, res) => {
-  const UserID = req.body.userID;
-  const ProductID = req.body.Product;
+  const UserID = req.body.userId;
+  const ProductID = req.body.ProId;
+  const variantsId = parseInt(req.body.variantsId);
+  console.log(req.body,variantsId);
   const deletes = await db
     .get()
     .collection(collection.CART_COLLECTION)
     .updateOne(
       {
-        userId: parseInt(UserID),
+        userId:UserID,
       },
       {
-        $pull: { products: { item: ProductID } },
+        $pull: {
+          products: { item:ObjectId(ProductID),variantsId: variantsId },
+        },
       }
     );
-
+  console.log(deletes);
   if (deletes) {
     res.status(200).json("deleted");
   } else {
