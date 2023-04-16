@@ -10,7 +10,7 @@ const {
   GetUserDeatilse,
   UpdateUserCridentails,
   ChangePassword
-} = require("../usercontrolls/authuserControlls");
+} = require("../userControls/authuserControls");
 
 router.route("/login").post(userLogin);
 router.route("/register").post(userRegistration);

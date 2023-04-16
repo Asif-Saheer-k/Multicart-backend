@@ -3,28 +3,11 @@ const router = express.Router();
 const { verifyToken } = require("../middlewares/jwtTokenverification");
 
 
-const {
-  AdminLogin,
-  ViewALLuser,
-  DeleteUser,  
-  AddBanner,
-  ViewAllBanner,
-  DeleteBanner,
-  AddCategory,
-  ViewCategory,
-  DeleteCategory,    
-  AddSubCategory, 
-  Addproducts,
-  ImageUploading,
-  ViewStockProducts,
-  UpdateProduct,
-  DeleteProduct,
-  viewStockManagementProducts,
-  EditCategory,
-  viewAllProducts,
-  EditSubCategoryVariants
-} = require("../adminControlls/adminControlls");
-const { viewSingleProduct } = require("../usercontrolls/commernControlls");
+const { viewSingleProduct } = require("../userControls/commonControls");
+const { AdminLogin, ViewALLuser, DeleteUser } = require("../adminControls/authControl");
+const { AddBanner, ViewAllBanner, DeleteBanner } = require("../adminControls/bannercontrol");
+const { AddCategory, ViewCategory, DeleteCategory, AddSubCategory, EditCategory, EditSubCategoryVariants } = require("../adminControls/categorycontrol");
+const { Addproducts, viewAllProducts, viewStockManagementProducts, UpdateProduct, DeleteProduct, ImageUploading } = require("../adminControls/productControl");
 
 router.route("/login").post(AdminLogin); 
 router.route("/view-allusers").get(verifyToken, ViewALLuser);

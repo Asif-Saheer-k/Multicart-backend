@@ -43,119 +43,11 @@ const uploadS3 = (fileData) => {
         });
     });
 };
-const AdminLogin = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    console.log(process.env.ADMIN_EMAI, process.env.ADMIN_PASSWORD);
-    if (email == process.env.ADMIN_EMAIL) {
-        if (password == process.env.ADMIN_PASSWORD) {
-            const token = generateToken(password);
-            res.status(200).json({ token });
-        } else {
-            res.status(401).json("Invalid password");
-        }
-    } else {
-        res.status(401).json("Invalid Email Address");
-    }
-});
-const ViewALLuser = asyncHandler(async (req, res) => {
-    try {
-        const AllUsers = await db.get().collection(collection.USER_COLLECTION).find().toArray();
-        console.log(AllUsers);
-        res.status(200).json(AllUsers);
-    } catch (error) {
-        res.status(400).json("No Records");
-    }
-});
-const DeleteUser = asyncHandler(async (req, res) => {
-    const ID = req.params.id;
-    const deleted = await db
-        .get()
-        .collection(collection.USER_COLLECTION)
-        .deleteOne({ _id: ObjectId(ID) });
 
-    if (deleted) {
-        res.status(200).json("Deleted");
-    } else {
-        res.status(500).json("Something Went Wrong");
-    }
-});
-const AddBanner = asyncHandler(async (req, res) => {
-    console.log(req.body);
-    const bannerData = req.body;
-    const Insert = await db.get().collection(collection.BANNER_COLLECTION).insertOne(bannerData);
-    if (Insert) {
-        console.log(Insert);
-        res.status(200).json("Success");
-    } else {
-        res.status(401).json("Something Went Wrong");
-    }
-});
-const ViewAllBanner = asyncHandler(async (req, res) => {
-    const AllBanner = await db.get().collection(collection.BANNER_COLLECTION).find().toArray();
-    if (AllBanner) {
-        res.status(200).json(AllBanner);
-    } else {
-        res.status(201).json("NO RECORDS");
-    }
-});
-const DeleteBanner = asyncHandler(async (req, res) => {
-    const id = req.params.id;
-    const DeleteBanner = await db
-        .get()
-        .collection(collection.BANNER_COLLECTION)
-        .deleteOne({ _id: ObjectId(id) });
-    if (DeleteBanner) {
-        res.status(200).json("Success");
-    } else {
-        res.status(405).json("Somthing Went Wrong");
-    }
-});
-const AddCategory = asyncHandler(async (req, res) => {
-    const category = req.body;
-    const update = await db.get().collection(collection.CATEGORY_COLLECTION).insertOne(category);
-    if (update) {
-        res.status(200).json(update);
-    } else {
-        res.status(500).json("Somthing Went Wrong");
-    }
-});
 
-const ViewCategory = asyncHandler(async (req, res) => {
-    const TotalCategory = await db.get().collection(collection.CATEGORY_COLLECTION).find().toArray();
-    if (TotalCategory) {
-        res.status(200).json(TotalCategory);
-    } else {
-        res.status(500).json("Somthing Went Wrong");
-    }
-});
-const DeleteCategory = asyncHandler(async (req, res) => {
-    const id = req.params.id;
-    const deleteCategory = await db
-        .get()
-        .collection(collection.CATEGORY_COLLECTION)
-        .deleteOne({ _id: ObjectId(id) });
-    if (deleteCategory) {
-        res.status(200).json(deleteCategory);
-    } else {
-        res.status(500).json("Somthing Went Wrong");
-    }
-});
 
-const AddSubCategory = asyncHandler(async (req, res) => {
-    const varition = req.body;
-    const updateCategory = req.body.category;
-    console.log(req.body);
-    const update = await db
-        .get()
-        .collection(collection.CATEGORY_COLLECTION)
-        .update({ Category: updateCategory }, { $push: { variation: varition } });
 
-    if (update) {
-        res.status(200).json("Success");
-    } else {
-        res.status(401).json("Somthing Went Wrong");
-    }
-});
+
 const Addproducts = asyncHandler(async (req, res) => {
     const product = req.body;
     const oldProducts = await db.get().collection(collection.PRODUCT_COLLECTION).find().sort({ _id: -1 }).limit(1);
@@ -303,53 +195,15 @@ const viewStockManagementProducts = asyncHandler(async (req, res) => {
         res.status(400).json("No records");
     }
 });
-const EditCategory = async (req, res) => {
-    const { Category, image, variation } = req.body;
-    const data = await db
-        .get()
-        .collection(CATEGORY_COLLECTION)
-        .updateOne(
-            {
-                Category: Category,
-            },
-            { $set: { image: image, variation: variation } }
-        );
-    if (data) {
-        res.status(201).json("Success");
-    } else {
-        res.status(500).json("Something Went Wrong");
-    }
-};
-const EditSubCategoryVariants = async (req, res) => {
-    const data = req.body;
-    const result = await db
-        .get()
-        .collection(CATEGORY_COLLECTION)
-        .updateOne(
-            {
-                Category: data.category,
-                "variation.subcategory": data.subcategory,
-            },
-            { $set: { "variation.$.variants": data.variants, "variation.$.Description": data.Description } }
-        );
-        console.log(result); 
-    if (result) {
-        res.status(201).json("Updated");
-    } else {
-        res.status(401).json("Somthing Went Wrong");
-    }
-};
+
+
+
+
+
+
+
+
 module.exports = {
-    AdminLogin,
-    ViewALLuser,
-    DeleteUser,
-    AddBanner,
-    ViewAllBanner,
-    DeleteBanner,
-    AddCategory,
-    ViewCategory,
-    DeleteCategory,
-    AddSubCategory,
     Addproducts,
     viewAllProducts,
     ViewCategoryProducts,
@@ -358,6 +212,5 @@ module.exports = {
     UpdateProduct,
     DeleteProduct,
     viewStockManagementProducts,
-    EditCategory,
-    EditSubCategoryVariants,
+  
 };

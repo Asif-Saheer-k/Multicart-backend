@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const fileUpload=require("express-fileupload")
+const apiRoutes=require("./userRoutes/api")
 const userRoutes = require("./userRoutes/authuserRoutes");
 const wishlistRoutes = require("./userRoutes/wishlistRoutes");
 const adminRoutes = require("./adminRoutes/adminRoutes");
@@ -49,11 +50,8 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 // user routes
-app.use("/api/user",userRoutes);
-app.use("/api/user/cart",cartRoutes);
-app.use("/api/user/wishlist",wishlistRoutes);
-app.use("/api/user/main",commonRouts);
-app.use("/api/admin",adminRoutes);
+app.use("/api",apiRoutes);
+
 
 //database connection
 db.connect((err) => {

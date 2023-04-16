@@ -44,6 +44,7 @@ const GetSubCategoryProducts = asyncHandler(async (req, res) => {
     res.status(201).json("No Records");
   }
 });
+
 module.exports = {
   viewSingleProduct,
   RazorpayIntegration,
