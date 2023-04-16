@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("./config/db");
 const cors = require("cors");
 const path = require("path");
+const bodyParser = require('body-parser')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const fileUpload=require("express-fileupload")
@@ -45,6 +46,7 @@ app.use(function (req, res, next) {
 app.use(fileUpload())
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 // user routes
 app.use("/api/user",userRoutes);

@@ -7,9 +7,10 @@ const addToCart = asyncHandler(async (req, res) => {
   const proId = req.body.ProId;
   const userId = req.body.userId;
   const variantsId = parseInt(req.body.variantsId);
+  const quantity= parseInt(req.body.quantity)
   const proObj = {
     item: ObjectId(proId),
-    quantity: 1,
+    quantity: quantity?quantity:1,
     variantsId,
   };
   if (variantsId && userId && proId) {
@@ -29,7 +30,7 @@ const addToCart = asyncHandler(async (req, res) => {
           .updateOne(
             { userId: userId, "products.item": ObjectId(proId) },
             {
-              $inc: { "products.$.quantity": 1 },
+              $inc: { "products.$.quantity": quantity },
             }
           );
         if (incquantity) {

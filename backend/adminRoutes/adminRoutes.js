@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { verifyToken } = require("../middlewares/jwtTokenverification");
+
+
 const {
   AdminLogin,
   ViewALLuser,
@@ -18,11 +20,13 @@ const {
   UpdateProduct,
   DeleteProduct,
   viewStockManagementProducts,
-  viewAllProducts
+  EditCategory,
+  viewAllProducts,
+  EditSubCategoryVariants
 } = require("../adminControlls/adminControlls");
 const { viewSingleProduct } = require("../usercontrolls/commernControlls");
 
-router.route("/login").post(AdminLogin);
+router.route("/login").post(AdminLogin); 
 router.route("/view-allusers").get(verifyToken, ViewALLuser);
 router.route("/delete-user/:id").delete(verifyToken, DeleteUser);
 router.route("/add-banner").post(verifyToken, AddBanner);
@@ -38,7 +42,9 @@ router.route("/view-all-stock-management-product").post(viewStockManagementProdu
 router.route("/view-single-stock-management-product/:id").get(viewSingleProduct)
 router.route("/update-products").post(verifyToken,UpdateProduct)
 router.route('/delete-products').post(verifyToken,DeleteProduct)
+router.route("/Edit-sub-category").post(EditCategory)
+router.route("/Edit-sub-category-variants").post(EditSubCategoryVariants)
 router.route("/image-uploading").post(ImageUploading)  
 
-module.exports = router; 
+module.exports = router;  
       
