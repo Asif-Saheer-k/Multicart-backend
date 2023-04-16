@@ -6,12 +6,11 @@ const bodyParser = require('body-parser')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const fileUpload=require("express-fileupload")
-const apiRoutes=require("./userRoutes/api")
-const userRoutes = require("./userRoutes/authuserRoutes");
-const wishlistRoutes = require("./userRoutes/wishlistRoutes");
-const adminRoutes = require("./adminRoutes/adminRoutes");
-const cartRoutes = require("./userRoutes/cartRoutes");
-const commonRouts=require("./userRoutes/commonRoutes")
+const cartRoutes=require("./userRoutes/cartRoutes")
+const wishlistRoutes=require("./userRoutes/wishlistRoutes")
+const commonRoutes=require("./userRoutes/commonRoutes")
+const orderRoutes=require("./userRoutes/orderRoutes")
+const adminRoutes=require("./userRoutes/adminRoutes")
 const morgan = require("morgan");
 __dirname = path.resolve();
 require("dotenv").config({ path: __dirname + "/.env" });
@@ -50,7 +49,12 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({ secret: "key", cookie: { maxAge: 6000000 } }));
 // user routes
-app.use("/api",apiRoutes);
+
+app.use("/api/user/cart",cartRoutes);
+app.use("/api/user/wishlist",wishlistRoutes);
+app.use("/api/user/main",commonRoutes);
+app.use("/api/user/order",orderRoutes); 
+app.use("/api/admin",adminRoutes);
 
 
 //database connection

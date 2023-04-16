@@ -45,8 +45,27 @@ const GetSubCategoryProducts = asyncHandler(async (req, res) => {
   }
 });
 
+const ViewProductList=(async(req,res)=>{
+  console.log(req.query.page);
+ const page= parseInt(req.query.page)
+ const items=parseInt(req.query.item) 
+ const skip = (page - 1) * items;
+ const subcategory=req.query.subcategory
+ const products = await db
+ .get()
+ .collection(collection.PRODUCT_COLLECTION)
+ .find({ hidden: false, stockManagement:true,subCategory:subcategory }).sort({_id:-1}).skip(skip).limit(items).toArray()
+if (products) {
+ res.status(200).json(products);
+} else {
+ res.status(400).json("Something Went Wrong");
+}
+
+
+})
 module.exports = {
   viewSingleProduct,
   RazorpayIntegration,
   GetSubCategoryProducts,
+  ViewProductList
 };

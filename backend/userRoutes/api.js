@@ -7,10 +7,6 @@ const orderRoutes=require("./orderRoutes")
 const adminRoutes=require("./adminRoutes")
 
 
-router.route("/user/cart",cartRoutes)
-router.route("/user/wishlist",wishlistRoutes)
-router.route("/user/main",commonRoutes)
-router.route("/user/order",orderRoutes)
-router.route("/admin",adminRoutes)
+
 
 module.exports = router;
